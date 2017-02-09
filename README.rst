@@ -13,6 +13,16 @@ Requirements
 - Python 3
 - PyQt5
 
+Installation
+============
+
+On Linux.
+
+1. apt-get install python-pip3
+2. pip3 install setuptools
+3. python3 setup.py install
+4. yoso
+
 
 Data Directory Structure
 ========================
