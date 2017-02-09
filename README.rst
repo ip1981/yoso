@@ -17,6 +17,16 @@ installed, you can run YOSO by simply executing ``python3 yoso.py``.
 Alternatively you can install YOSO with the `pip <https://pip.pypa.io>`_ package manager
 (which can be called ``pip3`` for Python 3).
 
+Installation
+============
+
+On Linux.
+
+1. apt-get install python-pip3
+2. pip3 install setuptools
+3. python3 setup.py install
+4. yoso
+
 
 Data Directory Structure
 ========================
