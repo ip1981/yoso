@@ -10,8 +10,12 @@ label file format is quite a good and flexible choice.
 Requirements
 ============
 
-- Python 3
-- PyQt5
+YOSO is written in `Python 3 <https://www.python.org/>`_ with
+the `PyQt5 <https://www.riverbankcomputing.com/software/pyqt/>`_
+application framework. If you have Python 3 and PyQt5 (and subsequently `Qt5 <https://www.qt.io>`_ itself)
+installed, you can run YOSO by simply executing ``python3 yoso.py``.
+Alternatively you can install YOSO with the `pip <https://pip.pypa.io>`_ package manager
+(which can be called ``pip3`` for Python 3).
 
 
 Data Directory Structure
