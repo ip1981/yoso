@@ -38,7 +38,7 @@ class MainWindow(QMainWindow):
         self._image_spinner.setValue(0)
         image_total = len(self._current_images)
         if image_total > 0:
-            self._progress_bar.setRange(1, image_total + 1)
+            self._progress_bar.setRange(0, image_total)
             self._image_spinner.setRange(1, image_total)
             self._image_spinner.setEnabled(True)
             self._image_spinner.setValue(1)
