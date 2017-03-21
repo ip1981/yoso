@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('YOSO - You Only Show Once')
         self.resize(800, 600)
         self.move(qApp.desktop().availableGeometry().center() - self.frameGeometry().center())
-        
+
 
         quit_action = QAction('&Quit', self)
         quit_action.setShortcut('Q')
@@ -139,6 +139,7 @@ class MainWindow(QMainWindow):
         self._next_image_action.triggered.connect(self.nextImage)
 
         menubar = self.menuBar()
+        menubar.setNativeMenuBar(False)
         menubar.addAction(open_action)
         menubar.addSeparator()
         menubar.addAction(self._prev_image_action)
