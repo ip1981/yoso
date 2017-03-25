@@ -1,4 +1,5 @@
 import errno
+import os
 
 import YOSO
 
@@ -70,27 +71,37 @@ class Scene(QGraphicsScene):
         self._guide_pen = QPen(Qt.black, 1)
         self.setDefaultClass(0)
 
+    def _boxes(self):
+        return list(filter(lambda i: i.type() == BBOX, self.items()))
+
     def saveLabels(self):
         if self._label_path != None:
-            lf = QSaveFile(self._label_path)
-            if not lf.open(QIODevice.WriteOnly | QIODevice.Text):
-                raise IOError('Cannot open "{}" for writing'.format(self._label_path))
+            if len(self._boxes()) == 0:
+                print('Removing empty "{}"'.format(self._label_path))
+                try:
+                    os.remove(self._label_path)
+                except OSError as ex:
+                    if ex.errno != errno.ENOENT:
+                        raise
+            else:
+                lf = QSaveFile(self._label_path)
+                if not lf.open(QIODevice.WriteOnly | QIODevice.Text):
+                    raise IOError('Cannot open "{}" for writing'.format(self._label_path))
 
-            for item in self.items():
-                if item.type() == BBOX:
-                    rect = item.rect()
-                    c = item.number
-                    x = (rect.x() + rect.width()  / 2 ) / self._img_w
-                    y = (rect.y() + rect.height() / 2 ) / self._img_h
+                for bbox in self._boxes():
+                    rect = bbox.rect()
+                    c = bbox.number
+                    x = (rect.x() + rect.width()  / 2) / self._img_w
+                    y = (rect.y() + rect.height() / 2) / self._img_h
                     w = rect.width()  / self._img_w
                     h = rect.height() / self._img_h
                     line = '{c:d} {x:.10f} {y:.10f} {w:.10f} {h:.10f}\n'.format(c=c, x=x, y=y, w=w, h=h)
                     lf.write(line.encode())
 
-            if lf.commit():
-                print('Wrote "{}"'.format(self._label_path))
-            else:
-                raise IOError('Cannot write "{}"'.format(self._label_path))
+                if lf.commit():
+                    print('Wrote "{}"'.format(self._label_path))
+                else:
+                    raise IOError('Cannot write "{}"'.format(self._label_path))
 
     def _addBBox(self, p1, p2, cls):
         rect = _mkRectF(p1, p2).intersected(QRectF(self._image.rect()))
