@@ -3,13 +3,11 @@ import os
 
 import YOSO
 
-from PyQt5.QtCore import ( pyqtSlot, QIODevice,
-        QModelIndex, QPointF, QRectF, QSaveFile, Qt )
+from PyQt5.QtCore import (pyqtSlot, QIODevice,
+                          QModelIndex, QPointF, QRectF, QSaveFile, Qt)
 from PyQt5.QtGui import QColor, QPen, QPixmap, QTransform
-from PyQt5.QtWidgets import ( QGraphicsItem, QGraphicsRectItem,
-        QGraphicsScene, QGraphicsView )
-
-from pprint import pprint
+from PyQt5.QtWidgets import (QGraphicsItem, QGraphicsRectItem,
+                             QGraphicsScene, QGraphicsView)
 
 BBOX = QGraphicsItem.UserType + 1
 
@@ -215,10 +213,10 @@ class Workspace(QGraphicsView):
         self.fitInView(scene_rect, Qt.KeepAspectRatio)
 
     @pyqtSlot(QModelIndex, QModelIndex)
-    def setDefaultClass(self, curr, prev):
+    def setDefaultClass(self, curr, _):
         self._scene.setDefaultClass(curr.data(Qt.UserRole))
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, _):
         self._fit()
 
     def loadImage(self, image_path, label_path):
