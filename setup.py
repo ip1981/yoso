@@ -2,13 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
     name             = 'YOSO',
-    version          = '0.1.0',
+    version          = '0.1.1',
     description      = 'You Only Show Once',
     long_description = 'A GUI tool to create training data for YOLO network by Darknet. See <http://pjreddie.com/darknet/yolo/>.',
     author           = 'Igor Pashev',
     author_email     = 'pashev.igor@gmail.com',
     license          = 'WTFPL',
-    data_files       = [('', [ 'LICENSE' ])],
+    data_files       = [('', [ 'LICENSE', 'ChangeLog.rst' ])],
 
     classifiers = [
         'Development Status :: 3 - Alpha',
