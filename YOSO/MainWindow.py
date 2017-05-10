@@ -139,6 +139,7 @@ class MainWindow(QMainWindow):
         self._next_image_action.triggered.connect(self.nextImage)
 
         menubar = self.menuBar()
+        menubar.setNativeMenuBar(False)
         menubar.addAction(open_action)
         menubar.addSeparator()
         menubar.addAction(self._prev_image_action)
