@@ -4,13 +4,24 @@ import errno
 
 from PyQt5.QtCore import QDir, QDirIterator, QItemSelectionModel, Qt
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import ( QAction, QComboBox, QFileDialog,
-    QListView, QMainWindow, QProgressBar, QSpinBox, QSplitter, QVBoxLayout,
-    QWidget, qApp )
+from PyQt5.QtWidgets import (
+    QAction,
+    QComboBox,
+    QFileDialog,
+    QListView,
+    QMainWindow,
+    QProgressBar,
+    QSpinBox,
+    QSplitter,
+    QVBoxLayout,
+    QWidget,
+    qApp,
+)
 
 from YOSO.Classes import Class, ClassListModel
 from YOSO.Workspace import Workspace
 import YOSO
+
 
 class MainWindow(QMainWindow):
 
@@ -26,8 +37,12 @@ class MainWindow(QMainWindow):
     _workspace = None
 
     def openImages(self, directory):
-        image_it = QDirIterator(directory, YOSO.IMAGE_FILE_TEMPLATES,
-                QDir.Files, QDirIterator.Subdirectories)
+        image_it = QDirIterator(
+            directory,
+            YOSO.IMAGE_FILE_TEMPLATES,
+            QDir.Files,
+            QDirIterator.Subdirectories,
+        )
         self._current_images = []
         while image_it.hasNext():
             self._current_images.append(image_it.next())
@@ -43,7 +58,6 @@ class MainWindow(QMainWindow):
             self._image_spinner.setEnabled(True)
             self._image_spinner.setValue(1)
 
-
     def openDataDir(self):
         dialog = QFileDialog(self)
 
@@ -54,17 +68,19 @@ class MainWindow(QMainWindow):
             datadir = dialog.selectedFiles()[0]
 
             classesdir = YOSO.classesDir(datadir)
-            classesdir_it = QDirIterator(classesdir, YOSO.IMAGE_FILE_TEMPLATES, QDir.Files)
+            classesdir_it = QDirIterator(
+                classesdir, YOSO.IMAGE_FILE_TEMPLATES, QDir.Files
+            )
             classes = []
             while classesdir_it.hasNext():
                 class_image = classesdir_it.next()
                 match = YOSO.CLASSES_RE.match(basename(class_image))
                 if match != None:
-                    class_num = int(match.group('cls'))
-                    class_name = match.group('name')
+                    class_num = int(match.group("cls"))
+                    class_name = match.group("name")
                     class_object = Class(class_num, class_name, QPixmap(class_image))
                     classes.append(class_object)
-            classes.sort(key = lambda c: c.number)
+            classes.sort(key=lambda c: c.number)
 
             classes_model = ClassListModel(classes)
             self._classes_view.setModel(classes_model)
@@ -72,13 +88,18 @@ class MainWindow(QMainWindow):
             self._classes_view.setEnabled(len(classes) > 0)
             selMod = self._classes_view.selectionModel()
             selMod.currentChanged.connect(self._workspace.setDefaultClass)
-            selMod.setCurrentIndex(classes_model.index(0, 0), QItemSelectionModel.Select)
+            selMod.setCurrentIndex(
+                classes_model.index(0, 0), QItemSelectionModel.Select
+            )
 
             self._top_images_dir = YOSO.imagesDir(datadir)
             self._top_labels_dir = YOSO.labelsDir(datadir)
 
-            imagedir_it = QDirIterator(self._top_images_dir,
-                    QDir.AllDirs | QDir.NoDotAndDotDot, QDirIterator.Subdirectories)
+            imagedir_it = QDirIterator(
+                self._top_images_dir,
+                QDir.AllDirs | QDir.NoDotAndDotDot,
+                QDirIterator.Subdirectories,
+            )
             self._image_dirs_combo_box.clear()
             self._image_dirs_combo_box.addItem(self._top_images_dir)
             while imagedir_it.hasNext():
@@ -91,15 +112,15 @@ class MainWindow(QMainWindow):
                     if ex.errno != errno.EEXIST:
                         raise
 
-
     def loadImage(self, i):
         self._prev_image_action.setEnabled(i > 1)
         self._next_image_action.setEnabled(i < self._image_spinner.maximum())
         if 1 <= i <= self._image_spinner.maximum():
             image_path = self._current_images[i - 1]
-            label_path = image_path.replace(self._top_images_dir, self._top_labels_dir) + '.txt'
+            label_path = (
+                image_path.replace(self._top_images_dir, self._top_labels_dir) + ".txt"
+            )
             self._workspace.loadImage(image_path, label_path)
-
 
     def nextImage(self):
         self._image_spinner.setValue(self._image_spinner.value() + 1)
@@ -107,35 +128,35 @@ class MainWindow(QMainWindow):
     def prevImage(self):
         self._image_spinner.setValue(self._image_spinner.value() - 1)
 
-
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle('YOSO - You Only Show Once')
+        self.setWindowTitle("YOSO - You Only Show Once")
         self.resize(800, 600)
-        self.move(qApp.desktop().availableGeometry().center() - self.frameGeometry().center())
+        self.move(
+            qApp.desktop().availableGeometry().center() - self.frameGeometry().center()
+        )
 
-
-        quit_action = QAction('&Quit', self)
-        quit_action.setShortcut('Q')
-        quit_action.setStatusTip('Quit application')
+        quit_action = QAction("&Quit", self)
+        quit_action.setShortcut("Q")
+        quit_action.setStatusTip("Quit application")
         quit_action.triggered.connect(qApp.quit)
 
-        open_action = QAction('&Open', self)
-        open_action.setShortcut('O')
-        open_action.setStatusTip('Open data directory')
+        open_action = QAction("&Open", self)
+        open_action.setShortcut("O")
+        open_action.setStatusTip("Open data directory")
         open_action.triggered.connect(self.openDataDir)
 
-        self._prev_image_action = QAction('Prev (&A)', self)
+        self._prev_image_action = QAction("Prev (&A)", self)
         self._prev_image_action.setEnabled(False)
-        self._prev_image_action.setShortcut('A')
-        self._prev_image_action.setStatusTip('Show previous image')
+        self._prev_image_action.setShortcut("A")
+        self._prev_image_action.setStatusTip("Show previous image")
         self._prev_image_action.triggered.connect(self.prevImage)
 
-        self._next_image_action = QAction('Next (&D)', self)
+        self._next_image_action = QAction("Next (&D)", self)
         self._next_image_action.setEnabled(False)
-        self._next_image_action.setShortcut('D')
-        self._next_image_action.setStatusTip('Show next image')
+        self._next_image_action.setShortcut("D")
+        self._next_image_action.setStatusTip("Show next image")
         self._next_image_action.triggered.connect(self.nextImage)
 
         menubar = self.menuBar()
@@ -147,10 +168,9 @@ class MainWindow(QMainWindow):
         menubar.addSeparator()
         menubar.addAction(quit_action)
 
-
         statusbar = self.statusBar()
         self._progress_bar = QProgressBar()
-        self._progress_bar.setFormat('%p% of %m')
+        self._progress_bar.setFormat("%p% of %m")
         self._image_spinner = QSpinBox()
         self._image_spinner.setEnabled(False)
         self._image_spinner.valueChanged.connect(self.loadImage)
@@ -158,7 +178,6 @@ class MainWindow(QMainWindow):
         statusbar.addWidget(self._image_spinner)
         statusbar.addWidget(self._progress_bar)
         statusbar.show()
-
 
         main_split = QSplitter(Qt.Horizontal)
 
@@ -182,10 +201,7 @@ class MainWindow(QMainWindow):
         left_layout.addWidget(self._image_dirs_combo_box)
         self._image_dirs_combo_box.currentTextChanged.connect(self.openImages)
 
-
         main_split.setStretchFactor(0, 1)
         main_split.setStretchFactor(1, 0)
 
         self.setCentralWidget(main_split)
-
-

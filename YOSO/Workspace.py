@@ -3,17 +3,30 @@ import os
 
 import YOSO
 
-from PyQt5.QtCore import (pyqtSlot, QIODevice,
-                          QModelIndex, QPointF, QRectF, QSaveFile, Qt)
+from PyQt5.QtCore import (
+    pyqtSlot,
+    QIODevice,
+    QModelIndex,
+    QPointF,
+    QRectF,
+    QSaveFile,
+    Qt,
+)
 from PyQt5.QtGui import QColor, QPen, QPixmap, QTransform
-from PyQt5.QtWidgets import (QGraphicsItem, QGraphicsRectItem,
-                             QGraphicsScene, QGraphicsView)
+from PyQt5.QtWidgets import (
+    QGraphicsItem,
+    QGraphicsRectItem,
+    QGraphicsScene,
+    QGraphicsView,
+)
 
 BBOX = QGraphicsItem.UserType + 1
+
 
 def _mkRectF(p1, p2):
     rect = QRectF(p1.x(), p1.y(), p2.x() - p1.x(), p2.y() - p1.y())
     return rect.normalized()
+
 
 class BoundingBoxItem(QGraphicsRectItem):
     _cls = None
@@ -39,7 +52,7 @@ class BoundingBoxItem(QGraphicsRectItem):
         if idx.isValid():
             self.setToolTip(idx.data(Qt.DisplayRole))
         else:
-            self.setToolTip('{} - <unknown>'.format(cls))
+            self.setToolTip("{} - <unknown>".format(cls))
 
     def dragEnterEvent(self, event):
         event.accept()
@@ -84,16 +97,20 @@ class Scene(QGraphicsScene):
             else:
                 lf = QSaveFile(self._label_path)
                 if not lf.open(QIODevice.WriteOnly | QIODevice.Text):
-                    raise IOError('Cannot open "{}" for writing'.format(self._label_path))
+                    raise IOError(
+                        'Cannot open "{}" for writing'.format(self._label_path)
+                    )
 
                 for bbox in self._boxes():
                     rect = bbox.rect()
                     c = bbox.number
-                    x = (rect.x() + rect.width()  / 2) / self._img_w
+                    x = (rect.x() + rect.width() / 2) / self._img_w
                     y = (rect.y() + rect.height() / 2) / self._img_h
-                    w = rect.width()  / self._img_w
+                    w = rect.width() / self._img_w
                     h = rect.height() / self._img_h
-                    line = '{c:d} {x:.10f} {y:.10f} {w:.10f} {h:.10f}\n'.format(c=c, x=x, y=y, w=w, h=h)
+                    line = "{c:d} {x:.10f} {y:.10f} {w:.10f} {h:.10f}\n".format(
+                        c=c, x=x, y=y, w=w, h=h
+                    )
                     lf.write(line.encode())
 
                 if lf.commit():
@@ -151,8 +168,12 @@ class Scene(QGraphicsScene):
             if self._bbox_start_pos == None:
                 painter.setClipRect(rect)
                 painter.setPen(self._guide_pen)
-                painter.drawLine(self._mouse_pos.x(), rect.top(), self._mouse_pos.x(), rect.bottom())
-                painter.drawLine(rect.left(), self._mouse_pos.y(), rect.right(), self._mouse_pos.y())
+                painter.drawLine(
+                    self._mouse_pos.x(), rect.top(), self._mouse_pos.x(), rect.bottom()
+                )
+                painter.drawLine(
+                    rect.left(), self._mouse_pos.y(), rect.right(), self._mouse_pos.y()
+                )
             else:
                 painter.setPen(self._bbox_pen)
                 painter.drawRect(_mkRectF(self._bbox_start_pos, self._mouse_pos))
@@ -176,16 +197,15 @@ class Scene(QGraphicsScene):
         for l in lines:
             m = YOSO.BBOX_RE.match(l)
             if m != None:
-                cls = int(m.group('cls'))
-                x = float(m.group('x'))
-                y = float(m.group('y'))
-                h = float(m.group('h'))
-                w = float(m.group('w'))
-                p1 = QPointF((x - w/2) * self._img_w, (y - h/2) * self._img_h)
-                p2 = QPointF((x + w/2) * self._img_w, (y + h/2) * self._img_h)
+                cls = int(m.group("cls"))
+                x = float(m.group("x"))
+                y = float(m.group("y"))
+                h = float(m.group("h"))
+                w = float(m.group("w"))
+                p1 = QPointF((x - w / 2) * self._img_w, (y - h / 2) * self._img_h)
+                p2 = QPointF((x + w / 2) * self._img_w, (y + h / 2) * self._img_h)
                 self._addBBox(p1, p2, cls)
         self.invalidate()
-
 
     @property
     def model(self):
@@ -194,7 +214,6 @@ class Scene(QGraphicsScene):
     def setModel(self, model):
         self._model = model
         self.setDefaultClass(0)
-
 
 
 class Workspace(QGraphicsView):
@@ -227,4 +246,3 @@ class Workspace(QGraphicsView):
 
     def setModel(self, model):
         self._scene.setModel(model)
-

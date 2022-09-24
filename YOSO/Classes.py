@@ -1,6 +1,4 @@
-from PyQt5.QtCore import ( QAbstractListModel, QMimeData,
-                           QModelIndex, Qt, QVariant )
-
+from PyQt5.QtCore import QAbstractListModel, QMimeData, QModelIndex, Qt, QVariant
 
 
 class Class:
@@ -27,7 +25,7 @@ class Class:
 
     @property
     def display(self):
-        return '{} - {}'.format(self._number, self._name)
+        return "{} - {}".format(self._number, self._name)
 
 
 class ClassListModel(QAbstractListModel):
@@ -47,7 +45,7 @@ class ClassListModel(QAbstractListModel):
         return len(self._classes)
 
     def mimeTypes(self):
-        return 'text/plain'
+        return "text/plain"
 
     def mimeData(self, indeces):
         idx = indeces[0]
@@ -78,11 +76,9 @@ class ClassListModel(QAbstractListModel):
         return self._classes
 
     def hsvF(self, num):
-        hue = 0.1 
+        hue = 0.1
         if self._size > 0:
             hue += num / self._size
         sat = 1.0
         val = 1.0
         return (hue, sat, val)
-
-
